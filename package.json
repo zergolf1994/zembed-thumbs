@@ -1,0 +1,31 @@
+{
+  "name": "s_thumbs",
+  "version": "1.0.0",
+  "description": "",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "nodemon server.js",
+    "pm2": "pm2 start cluster.js --name=s_thumbs"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.20"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "check-disk-space": "^3.3.1",
+    "cors": "^2.8.5",
+    "dotenv": "^16.0.3",
+    "express": "^4.18.2",
+    "fs-extra": "^11.1.0",
+    "mysql2": "^3.1.0",
+    "query-string": "^7.1.1",
+    "request-promise": "^4.2.6",
+    "sequelize": "^6.28.0",
+    "image-size": "^1.0.2",
+    "merge-img": "^2.1.3",
+    "moment": "^2.29.4",
+    "shelljs": "^0.8.5"
+  }
+}
