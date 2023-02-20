@@ -101,7 +101,7 @@ module.exports = async (req, res) => {
       duration / IntervalPerImage / (rowCount * colCount)
     );
 
-    let w = 200;
+    let h = 112;
     let imgdir = path.join(global.dir, "public");
     if (!fs.existsSync(path.join(imgdir, `.tmp`, slug))) {
       fs.rmSync(path.join(imgdir, `.tmp`), { recursive: true, force: true });
@@ -114,11 +114,13 @@ module.exports = async (req, res) => {
     console.log("downloading %s", slug, totalImages);
     for (let inv = 1; inv <= totalImages; inv++) {
       let sec = start_inv_image;
-      await downloadThumbs({ sv_ip, slug, file_name, sec, w, imgdir });
+      await downloadThumbs({ sv_ip, slug, file_name, sec, h, imgdir });
       console.log("download %s / %s", inv, totalImages);
       start_inv_image += IntervalPerImage;
     }
     console.log("downloaded %s", slug);
+    
+    await TimeSleep(1);
     Jimp.read(
       path.join(imgdir, `.tmp`, slug, `path`, `1.jpg`),
       (err, image) => {
@@ -130,8 +132,10 @@ module.exports = async (req, res) => {
       }
     );
 
+    await TimeSleep(1);
     let { width, height } = await getThumbsSize({ slug, imgdir });
 
+    await TimeSleep(1);
     let { table, table_c, file_vtt } = await createVTT({
       totalSpirits,
       totalImages,
@@ -144,10 +148,16 @@ module.exports = async (req, res) => {
       imgdir,
     });
 
+    await TimeSleep(1);
     let { links } = await createSpriteX({ table, colCount, imgdir, slug });
+    
+    await TimeSleep(1);
     let { linksY } = await createSpriteY({ links, imgdir, slug });
+    
+    await TimeSleep(1);
     let { link_image } = await resizeJimp({ linksY, imgdir, slug });
 
+    await TimeSleep(1);
     //create file vtt
     let thumb = await Files.Datas.findOne({
       raw: true,
@@ -218,11 +228,11 @@ function getOptimalInterval(duration) {
   if (duration < 7200) return 10;
   return 10;
 }
-function downloadThumbs({ sv_ip, slug, file_name, sec, w, imgdir }) {
+function downloadThumbs({ sv_ip, slug, file_name, sec, h, imgdir }) {
   //let times = sec * 1000;
   const url = `http://${sv_ip}:8889/thumb/${slug}/${file_name}/thumb-${
     sec * 1000
-  }-w${w}.jpg`;
+  }-h${h}.jpg`;
   let file_parts = path.join(imgdir, `.tmp`, slug, `path`, `${sec}.jpg`);
   return new Promise(function (resolve, reject) {
     if (fs.existsSync(file_parts)) {
